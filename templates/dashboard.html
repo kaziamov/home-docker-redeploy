@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Deploy Dashboard</title>
+    <style>
+        table { border-collapse: collapse; width: 50%; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background: #f0f0f0; }
+        button { padding: 5px 10px; }
+    </style>
+</head>
+<body>
+    <h1>Deploy Dashboard</h1>
+    <button onclick="scanDirs()">Обновить</button>
+    <br><br>
+    <table id="dirsTable">
+        <thead>
+            <tr><th>Директория</th><th>Действие</th></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <script>
+        function scanDirs() {
+            fetch('/scan').then(r => r.json()).then(data => {
+                const tbody = document.querySelector('#dirsTable tbody');
+                tbody.innerHTML = '';
+                data.dirs.forEach(dir => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${dir}</td><td><button onclick=\"redeploy('${dir}')\">Redeploy</button></td>`;
+                    tbody.appendChild(tr);
+                });
+            });
+        }
+        function redeploy(dir) {
+            if (!confirm(`Выполнить redeploy для ${dir}?`)) return;
+            fetch(`/redeploy/${dir}`, {method: 'POST'}).then(r => r.json()).then(data => {
+                if (data.status === 'ok') {
+                    alert('Redeploy успешно!');
+                } else {
+                    alert('Ошибка: ' + data.message);
+                }
+            });
+        }
+        // Автоматически сканировать при загрузке
+        window.onload = scanDirs;
+    </script>
+</body>
+</html>

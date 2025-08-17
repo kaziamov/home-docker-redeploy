@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  dashboard:
+    build: .
+    container_name: deploy-dashboard
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: python app.py
