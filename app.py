@@ -28,10 +28,10 @@ def redeploy(dirname):
         return jsonify({'status': 'error', 'message': 'Directory not found'}), 404
     try:
         cmds = [
-            'docker-compose down',
+            'docker compose down',
             'git pull',
-            'docker-compose build',
-            'docker-compose up -d'
+            'docker compose build',
+            'docker compose up -d'
         ]
         for cmd in cmds:
             subprocess.run(cmd, shell=True, cwd=target_dir, check=True)

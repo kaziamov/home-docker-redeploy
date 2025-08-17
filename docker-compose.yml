@@ -8,6 +8,7 @@ services:
     volumes:
       - .:/app
       - ../:/host_parent_dir
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       HOST_PARENT_DIR: /host_parent_dir
     working_dir: /app
