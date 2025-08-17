@@ -10,14 +10,20 @@ def dashboard():
 
 @app.route('/scan', methods=['GET'])
 def scan_directories():
-    base_dir = os.getcwd()
-    dirs = [d for d in os.listdir(base_dir) if os.path.isdir(os.path.join(base_dir, d))]
+    root_dir = os.environ.get('HOST_PARENT_DIR', os.getcwd())
+
+    app_dir = os.path.basename(os.getcwd())
+    dirs = [d for d in os.listdir(root_dir)
+        if os.path.isdir(os.path.join(root_dir, d))
+        and d != 'templates'
+        and not d.startswith('.')
+        and d != app_dir]
     return jsonify({'dirs': dirs})
 
 @app.route('/redeploy/<dirname>', methods=['POST'])
 def redeploy(dirname):
-    base_dir = os.getcwd()
-    target_dir = os.path.join(base_dir, dirname)
+    root_dir = os.environ.get('HOST_PARENT_DIR', os.getcwd())
+    target_dir = os.path.join(root_dir, dirname)
     if not os.path.isdir(target_dir):
         return jsonify({'status': 'error', 'message': 'Directory not found'}), 404
     try:
